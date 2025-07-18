@@ -18,7 +18,7 @@ Register *BinarySensor::build_entity(Manager *manager, const char *name, const c
 #ifdef USE_API
   if (api::global_api_server)
     entity->add_on_state_callback(
-        [entity](bool state) { api::global_api_server->on_binary_sensor_update(entity, state); });
+        [entity](bool state) { api::global_api_server->on_binary_sensor_update(entity); });
 #endif
   return entity;
 }
