@@ -104,7 +104,9 @@ void TextSensor::parse_enum_(ENUM_DEF::enum_t enum_value) {
 }
 
 void TextSensor::parse_string_(const char *string_value) {
-  if (strcmp(this->raw_state.c_str(), string_value)) {
+  // https://github.com/esphome/esphome/pull/12246
+  // https://github.com/esphome/esphome/pull/12205
+  if (this->get_raw_state() != string_value) {
     this->raw_value_ = BITMASK_DEF::VALUE_UNKNOWN;
     this->publish_state(std::string(string_value));
   }

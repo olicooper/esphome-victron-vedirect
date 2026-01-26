@@ -82,7 +82,13 @@ void Select::parse_string_(const char *string_value) {
   // that are not ENUM in VEDirect context...but let's keep it for the sake of
   // completeness.
 #if ESPHOME_VERSION_CODE >= VERSION_CODE(2025, 11, 0)
-  if (strcmp(this->current_option(), string_value)) {
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
+  // https://github.com/esphome/esphome/pull/13095
+  if (this->current_option() != string_value)
+#else
+  if (strcmp(this->current_option(), string_value))
+#endif
+  {
     auto index = this->index_of(string_value);
     if (index.has_value()) {
       this->publish_index_(index.value());
@@ -208,7 +214,12 @@ void Select::publish_index_(size_t index) {
   this->state = this->traits_().options()[index];
   ESP_LOGD(TAG, "'%s': Sending state %s (index %zi)", this->get_name().c_str(), this->state.c_str(), index);
 #endif
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
+  //https://github.com/esphome/esphome/pull/12505
+  this->state_callback_.call(index);
+#else
   this->state_callback_.call(this->traits_().options()[index], index);
+#endif
 }
 
 void Select::publish_unknown_() {
@@ -222,7 +233,11 @@ void Select::publish_unknown_() {
 #else
   this->state = "unknown";
 #endif
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
+  this->state_callback_.call(static_cast<size_t>(-1));
+#else
   this->state_callback_.call("", static_cast<size_t>(-1));
+#endif
 }
 }  // namespace m3_vedirect
 }  // namespace esphome

@@ -217,8 +217,14 @@ void Manager::init_entity(EntityBase *entity, const REG_DEF *reg_def, const char
       name = strdup(reg_name_buf);
     }
   }
-  entity->set_name(name);
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
+  // https://github.com/esphome/esphome/pull/12631
+  // https://github.com/esphome/esphome/pull/11941
+  entity->set_name(name, fnv1_hash_object_id(name, strlen(name)));
+#else
   entity->set_object_id(name);
+  entity->set_name(name);
+#endif
 }
 
 #if defined(VEDIRECT_USE_HEXFRAME)
@@ -493,7 +499,9 @@ void Manager::on_frame_text_(TextRecord **text_records, uint8_t text_records_cou
       textframe_value.append(text_record->value);
       textframe_value.append(",");
     }
-    if (rawtextframe->raw_state != textframe_value) {
+    // https://github.com/esphome/esphome/pull/12246
+    // https://github.com/esphome/esphome/pull/12205
+    if (rawtextframe->get_raw_state() != textframe_value) {
       rawtextframe->publish_state(textframe_value);
     }
   }
