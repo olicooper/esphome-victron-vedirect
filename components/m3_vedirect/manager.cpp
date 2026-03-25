@@ -217,6 +217,9 @@ void Manager::init_entity(EntityBase *entity, const REG_DEF *reg_def, const char
       name = strdup(reg_name_buf);
     }
   }
+#if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 3, 0)
+#warning "WARNING: Dynamic entity creation is currently broken when using ESPHome 2026.3.0 or later. DO NOT USE"
+#else
 #if ESPHOME_VERSION_CODE >= VERSION_CODE(2026, 1, 0)
   // https://github.com/esphome/esphome/pull/12631
   // https://github.com/esphome/esphome/pull/11941
@@ -224,6 +227,7 @@ void Manager::init_entity(EntityBase *entity, const REG_DEF *reg_def, const char
 #else
   entity->set_object_id(name);
   entity->set_name(name);
+#endif
 #endif
 }
 
