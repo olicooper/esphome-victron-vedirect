@@ -540,6 +540,8 @@ async def to_code(config: dict):
 _CTYPE_VALIDATOR_MAP = {
     cv.string: cg.std_string,
     cv.int_: cg.int_,
+    cv.uint8_t: cg.uint8,
+    cv.uint32_t: cg.uint32,
     validate_register_id: cg.uint16,
 }
 
@@ -570,10 +572,10 @@ MANAGER_ACTIONS = {
     },
     "send_command": {
         cv.Optional(CONF_VEDIRECT_ID, default=""): cv.string,
-        cv.Required(CONF_COMMAND): cv.int_,
+        cv.Required(CONF_COMMAND): cv.uint8_t,
         cv.Optional(CONF_REGISTER_ID): validate_register_id,
-        cv.Optional(ec.CONF_DATA): cv.int_,
-        cv.Optional(CONF_DATA_SIZE): cv.int_,
+        cv.Optional(ec.CONF_DATA): cv.uint32_t,
+        cv.Optional(CONF_DATA_SIZE): cv.uint8_t,
     },
 }
 
